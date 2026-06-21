@@ -22,16 +22,53 @@ A DanceSport athlete (amateur or professional) preparing for a competition, show
 
 ### 2.3 Question Categories (UI)
 
-The UI surfaces 6 pre-built question categories, each with 4 example questions:
+The home page surfaces 6 pre-built question categories with clickable example questions. The layout is a two-column grid (see [`images/home_page.jpg`](../images/home_page.jpg)):
 
-| Category | Focus |
-|---|---|
-| Performance Readiness | Readiness signals, final weeks, mistake recovery |
-| Practice & Preparation | Routine practice, frequency, memorisation |
-| Musicality & Timing | Timing, breathing, music connection |
-| Confidence & Stage Presence | Nerves, first impression, projecting confidence |
-| Expression & Storytelling | Emotional connection, story, memorability |
-| Mindset & Mental Performance | Focus, visualisation, post-mistake recovery |
+- **Left column:** Performance Readiness, Practice & Preparation, Musicality & Timing
+- **Right column:** Confidence & Stage Presence, Expression & Storytelling, Mindset & Mental Performance
+
+#### 🎯 Performance Readiness
+
+- How do I know if I am ready to perform my showcase?
+- What should I focus on during the final weeks before my showcase?
+- How can I reduce mistakes during my performance?
+- What should I do if I forget part of my routine on the floor?
+
+#### 📋 Practice & Preparation
+
+- What is the best way to practice my showcase routine?
+- How often should I practice between lessons?
+- How do I remember my showcase routine more effectively?
+- How can I make my practice sessions more productive?
+- How do I transition from learning choreography to performing it?
+
+#### 🎵 Musicality & Timing
+
+- How can I improve my timing with the music?
+- How do I stay on time when I get nervous?
+- How can I better connect my movements to the music?
+- How important is breathing for timing, movement, and performance quality?
+
+#### ✨ Confidence & Stage Presence
+
+- How can I look more confident on the dance floor?
+- How do I manage performance anxiety or stage fright?
+- How can I project confidence even when I feel nervous?
+- How can I make a strong first impression when I enter the floor?
+
+#### 💃 Expression & Storytelling
+
+- How can I make my performance more expressive?
+- How can I better tell the story of the dance?
+- How do I connect emotionally with the music and my audience?
+- What makes a showcase performance memorable?
+
+#### 🧠 Mindset & Mental Performance
+
+- Why is mental clarity important in DanceSport?
+- How can I stay mentally focused during my performance?
+- How do I recover mentally after making a mistake?
+- How can visualization improve my showcase performance?
 
 ### 2.4 Answer Behaviour
 
@@ -209,13 +246,17 @@ Citation:  [Dance To Your Maximum, Chapter X-Y, pp. Z–W]
 
 `app.py` imports the `ask()` function from `rag_chain.py`. The RAG graph is initialised once via a module-level singleton (`_rag_app`) and reused across all requests.
 
-**UI layout:**
-- Page header with title and subtitle
-- Description paragraph
-- 2-column grid of 6 category headers × 4 clickable question buttons
+**UI layout (see [`images/home_page.jpg`](../images/home_page.jpg)):**
+- Page header: "DanceSport Wellbeing Coach" with logo and link icon
+- Subtitle: "Grounded in *Dance To Your Maximum* — Maximiliaan Winkelhuis"
+- Description paragraph: "Ask me anything about showcase or competition preparation. I'll answer using the coaching materials in my knowledge base and cite the exact passage and page number for every response."
 - Horizontal divider
+- Prompt heading: "Ask me anything — or pick a question below to get started:"
+- 2-column grid of 6 category headers (each with an emoji icon) and clickable question buttons:
+  - Left column: Performance Readiness (4), Practice & Preparation (5), Musicality & Timing (4)
+  - Right column: Confidence & Stage Presence (4), Expression & Storytelling (4), Mindset & Mental Performance (4)
 - Scrollable chat history (Streamlit `st.chat_message`)
-- Persistent `st.chat_input` at the bottom
+- Persistent `st.chat_input` at the bottom ("Ask your question…")
 
 **Pending question pattern:** clicking a button sets `st.session_state.pending_question`; the main render loop reads it before reading `st.chat_input`, then calls `st.rerun()` to re-render with the answer appended.
 
