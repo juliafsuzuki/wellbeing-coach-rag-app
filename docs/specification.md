@@ -1,4 +1,4 @@
-# Wellbeing Coach RAG Application — Functional & Technical Specification
+# Functional & Technical Specification
 
 ## 1. Purpose & Scope
 
