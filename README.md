@@ -1,5 +1,7 @@
 # DanceSport Wellbeing RAG Application
 
+>> The RAG application, DanceSport Wellbeing RAG Application helps DanceSport athletes answer questions on showcase and competition preparation and performance readiness in a chatbot UI with grounded citations, safe fallback behavior, a target of 90% faithfulness, and under 8-second response time.
+
 ## Problem Statement
 
 DanceSport athletes navigate a complex mix of physical, mental, emotional, psychological, and strategic challenges while preparing for showcase performances and competitions. While expert coaching and valuable educational resources exist, access to them is often limited and expensive. Many insights remain buried in books, articles, and other written materials, making discovery largely a matter of chance.
