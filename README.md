@@ -38,41 +38,16 @@ Structured retrieval from Pinecone vector store using semantic search and metada
 Inline citations in every response, formatted as [Dance To Your Maximum, Chapter X-X, pp. XX–XX], enabling athletes and coaches to verify and deepen their reading
 Faithfulness evaluation pipeline using an LLM-as-judge approach, targeting ≥90% faithfulness against a 15-question benchmark test set
 
-## Technical Architecture
+## Home page | GUI where DanceSport athletes (target audience) can interact with the RAG Application
 
-<img width="1672" height="941" alt="6-EndToEndWorkflow" src="https://github.com/user-attachments/assets/d0e37f8d-ef2b-4fdd-99c3-f166a12b1edb" />
+The home page surfaces 6 pre-built categories with clickable example questions, arranged in a two-column grid as shown in the diagram below.
 
-- **Orchestration:** LangChain + LangGraph + LangSmith
-- **LLM:** OpenAI `gpt-4.1-mini` (routing/judge temp=0, generation temp=0.1)
-- **Embeddings:** OpenAI `text-embedding-3-small` (dim=1536)
-- **Vector store:** Pinecone Serverless — index `wellbeing-coach-rag`, cosine, AWS `us-east-1`
-- **PDF + OCR:** PyMuPDF (fitz) + Tesseract (pytesseract)
-- **UI:** Streamlit (`app.py`)
-- **Notebook:** `1_wellbeing_coach__rag_app_langchain.ipynb`
-- **LangSmith project:** `wellbeing-coach-rag-app-langchain`
+<img width="378" height="692" alt="Screenshot 2026-06-21 222442" src="https://github.com/user-attachments/assets/819e36f8-1ae6-4d46-ae61-886fcf705d5b" />
 
-<img width="275" height="134" alt="image" src="https://github.com/user-attachments/assets/ad6e478c-c8af-439f-b833-44c4a4a02228" />
-
-The ingestion pipeline applies hierarchical chunking tuned to the workbook's structure: tighter chunks for prose chapters (1,200 chars) and larger windows for tests, forms, and appendices (2,200 chars), preserving semantic coherence. Each chunk carries rich metadata — part scope, chapter, section type, and page range — enabling targeted retrieval and accurate citation generation.
-
-## Value Proposition
-
-Trustworthy outputs: every claim links back to a specific page range in the source text, eliminating hallucination risk on in-scope questions
-Domain-aware retrieval: routing and metadata filtering ensure the model draws from the right section of the knowledge base, not just the nearest vector
-Measurable quality: the built-in evaluation pipeline gives objective faithfulness metrics before any deployment or knowledge-base update
-Low barrier to use: Streamlit UI requires no technical knowledge from end users
-
-## Documentation
-
-- [Project Specification](docs/specification.md): Both functional & technical: user stories, UI categories, RAG graph, routing, metadata schema, evaluation, constraints.
-- [Project Design](docs/project_design.md): Architecture, chunking, retrieval, and evaluation decisions.
-
-## Home page — question categories
-
-The home page surfaces 6 pre-built categories with clickable example questions, arranged in a two-column grid (see [`images/home_page.jpg`](images/home_page.jpg)).
+Below: Lists of questions for 6 different categories.
 
 **🎯 Performance Readiness**
-- How do I know if I am ready to perform my showcase?
+- How do I know if I am ready to perform my showcase?|
 - What should I focus on during the final weeks before my showcase?
 - How can I reduce mistakes during my performance?
 - What should I do if I forget part of my routine on the floor?
@@ -118,6 +93,35 @@ Every claim is tagged and cited:
 - **Confidence:** HIGH (≥80%) · MED (50–80%) · LOW (20–50%) · VERY LOW (<20%) · UNKNOWN
 - **Citation:** `[Dance To Your Maximum, Chapter X-Y, pp. Z–W]`
 - **Refusal:** When no relevant context is retrieved, the answer begins with `"I don't have that in my knowledge base."` — no fabrication.
+  
+## Technical Architecture
+
+<img width="1672" height="941" alt="6-EndToEndWorkflow" src="https://github.com/user-attachments/assets/d0e37f8d-ef2b-4fdd-99c3-f166a12b1edb" />
+
+- **Orchestration:** LangChain + LangGraph + LangSmith
+- **LLM:** OpenAI `gpt-4.1-mini` (routing/judge temp=0, generation temp=0.1)
+- **Embeddings:** OpenAI `text-embedding-3-small` (dim=1536)
+- **Vector store:** Pinecone Serverless — index `wellbeing-coach-rag`, cosine, AWS `us-east-1`
+- **PDF + OCR:** PyMuPDF (fitz) + Tesseract (pytesseract)
+- **UI:** Streamlit (`app.py`)
+- **Notebook:** `1_wellbeing_coach__rag_app_langchain.ipynb`
+- **LangSmith project:** `wellbeing-coach-rag-app-langchain`
+
+<img width="275" height="134" alt="image" src="https://github.com/user-attachments/assets/ad6e478c-c8af-439f-b833-44c4a4a02228" />
+
+The ingestion pipeline applies hierarchical chunking tuned to the workbook's structure: tighter chunks for prose chapters (1,200 chars) and larger windows for tests, forms, and appendices (2,200 chars), preserving semantic coherence. Each chunk carries rich metadata — part scope, chapter, section type, and page range — enabling targeted retrieval and accurate citation generation.
+
+## Value Proposition
+
+Trustworthy outputs: every claim links back to a specific page range in the source text, eliminating hallucination risk on in-scope questions
+Domain-aware retrieval: routing and metadata filtering ensure the model draws from the right section of the knowledge base, not just the nearest vector
+Measurable quality: the built-in evaluation pipeline gives objective faithfulness metrics before any deployment or knowledge-base update
+Low barrier to use: Streamlit UI requires no technical knowledge from end users
+
+## Documentation
+
+- [Project Specification](docs/specification.md): Both functional & technical: user stories, UI categories, RAG graph, routing, metadata schema, evaluation, constraints.
+- [Project Design](docs/project_design.md): Architecture, chunking, retrieval, and evaluation decisions.
 
 ## Repository layout
 
