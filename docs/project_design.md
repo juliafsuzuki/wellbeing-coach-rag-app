@@ -1,13 +1,4 @@
----
-name: project-design
-description: Full architecture and design decisions for the DanceSport Wellbeing Coach RAG app
-metadata: 
-  node_type: memory
-  type: project
-  originSessionId: b072a271-feeb-4442-8261-2ac2b07c9768
----
-
-# Wellbeing Coach RAG App — Design Decisions
+# Design Decisions
 
 ## Stack
 - LangChain + LangGraph + LangSmith
