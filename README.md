@@ -1,4 +1,4 @@
-# DanceSport Wellbeing Coach RAG Application
+# DanceSport Wellbeing RAG Application
 
 ## Problem Statement
 
@@ -62,10 +62,8 @@ Low barrier to use: Streamlit UI requires no technical knowledge from end users
 
 ## Documentation
 
-- [Functional & Technical Specification](docs/specification.md) — Authoritative spec: user stories, UI categories, RAG graph, routing, metadata schema, evaluation, constraints.
+- [Project Specification](docs/specification.md) — Functional & technical specifications: user stories, UI categories, RAG graph, routing, metadata schema, evaluation, constraints.
 - [Project Design](docs/project_design.md) — Architecture, chunking, retrieval, and evaluation decisions.
-- [Memory Index](docs/MEMORY.md) — Index of design and reference docs.
-- [Repo Reference](docs/reference_github.md) — Canonical repository URL.
 
 ## Home page — question categories
 
