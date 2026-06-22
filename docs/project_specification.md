@@ -1,34 +1,13 @@
 # Functional & Technical Specification
 Functional & technical specification for the DanceSport Wellbeing Coach RAG app
 
-## 1. Purpose & Scope
+## 1. Functional Specification
 
-The DanceSport Wellbeing Coach is a single-source Retrieval-Augmented Generation (RAG) application that enables DanceSport athletes to access trusted guidance on training, performance, and wellbeing by asking natural-language questions related to showcase and competition preparation.
-
-The coach is designed to serve multiple roles, including a/an:
-- **Evidence-based advisor** that provides trusted guidance specially for showcase and competition success.
-- **DanceSport coach** that helps athletes train effectively, perform with confidence, and compete at their highest potential.
-- **Full Potential coach** that empowers athletes to unlock their maximum potential both on and off the dance floor.
-- **Wellbeing and performance companion** that helps athletes strengthen the physical, mental, emotional, and performance dimensions.
-- **Personalized companion** that supports athletes in their pursuit of excellence, continuous improvement, and mastery.
-
-Athletes can ask questions and receive guidance across six categories: 
-1. Performance readiness
-2. Practice and preparation
-3. Musicality and timing
-4. Confidence and stage presence
-5. Expression and storytelling
-6. Mindset and mental performance
-   
-All responses are grounded exclusively in *Dance To Your Maximum* by Maximiliaan Winkelhuis and include inline citations to the relevant chapter and page, enabling athletes to verify the source material and explore the concepts in greater depth.
-
-## 2. Functional Specification
-
-### 2.1 Target User
+### 1.1 Target User
 
 A DanceSport athlete (amateur or professional) preparing for a competition, showcase, or season. The user may have no AI/ML background; the interface must be self-explanatory.
 
-### 2.2 User Stories
+### 1.2 User Stories
 
 | ID | As a… | I want to… | So that… |
 |---|---|---|---|
@@ -38,7 +17,7 @@ A DanceSport athlete (amateur or professional) preparing for a competition, show
 | US-04 | Athlete | Receive an honest "I don't know" when the topic is outside the book | I am not misled by fabricated advice |
 | US-05 | Athlete | Maintain a conversation history within a session | I can refer back to earlier answers without re-asking |
 
-### 2.3 Question Categories (UI)
+### 1.3 Question Categories (UI)
 
 The home page surfaces 6 pre-built question categories with clickable example questions. The layout is a two-column grid (see [`images/home_page.jpg`](../images/home_page.jpg)):
 
@@ -88,7 +67,7 @@ The home page surfaces 6 pre-built question categories with clickable example qu
 - How do I recover mentally after making a mistake?
 - How can visualization improve my showcase performance?
 
-### 2.4 Answer Behaviour
+### 1.4 Answer Behaviour
 
 - Every factual claim is tagged: `[KNOWN]`, `[INFERRED]`, `[COMPUTED]`, `[COMMON]`, `[FRAME]`, or `[GUESS]`
 - Every claim carries an inline citation: `[Dance To Your Maximum, Chapter X-Y, pp. Z–W]`
@@ -96,20 +75,20 @@ The home page surfaces 6 pre-built question categories with clickable example qu
 - The persona is expert, direct, and anti-sycophantic: does not capitulate to pushback without new evidence
 - A confidence level (HIGH / MED / LOW / VERY LOW / UNKNOWN) accompanies claims
 
-### 2.5 Session Behaviour
+### 1.5 Session Behaviour
 
 - Chat history persists within a browser session (Streamlit `session_state`)
 - History resets on page reload (no persistent cross-session memory)
 - Clicking an example question injects it as if typed by the user
 
-### 2.6 Evaluation Acceptance Criteria
+### 1.6 Evaluation Acceptance Criteria
 
 - Faithfulness target: ≥ 90% of answers on the 15-question benchmark are fully supported by the retrieved context (LLM judge)
 - Faithfulness is evaluated in-notebook; a PASS/FAIL result is printed
 
-## 3. Technical Specification
+## 2. Technical Specification
 
-### 3.1 Technology Stack
+### 2.1 Technology Stack
 
 | Layer | Technology | Version / Model |
 |---|---|---|
@@ -125,7 +104,7 @@ The home page surfaces 6 pre-built question categories with clickable example qu
 | UI | Streamlit | — |
 | Environment | python-dotenv / `.env` | Keys: `OPENAI_API_KEY`, `PINECONE_API_KEY`, `LANGCHAIN_API_KEY` |
 
-### 3.2 Repository Layout
+### 2.2 Repository Layout
 
 ```
 wellbeing-coach-rag-app/
@@ -140,7 +119,7 @@ wellbeing-coach-rag-app/
 └── .venv/                          # Python virtual environment
 ```
 
-### 3.3 Data Pipeline
+### 2.3 Data Pipeline
 
 The ingestion pipeline runs once in the notebook and writes to Pinecone. The Streamlit app reads from Pinecone only.
 
@@ -176,7 +155,7 @@ PDF (316 image pages)
      Index: wellbeing-coach-rag
 ```
 
-### 3.4 Chunk Metadata Schema (Pinecone)
+### 2.4 Chunk Metadata Schema (Pinecone)
 
 Each vector carries this metadata payload:
 
@@ -193,7 +172,7 @@ Each vector carries this metadata payload:
 | `chunk_id` | str | `"a3f9bc12de7f"` |
 | `parent_id` | str | `"page_21"` |
 
-### 3.5 RAG Graph (LangGraph)
+### 2.5 RAG Graph (LangGraph)
 
 The runtime pipeline is a deterministic 3-node directed graph with no conditional branches:
 
@@ -229,7 +208,7 @@ The runtime pipeline is a deterministic 3-node directed graph with no conditiona
 - Returns answer string
 - If `documents` is empty → returns refusal string directly (no LLM call)
 
-### 3.6 Query Routing Logic
+### 2.6 Query Routing Logic
 
 | Question intent | `part_scope` | `section_type` |
 |---|---|---|
@@ -243,7 +222,7 @@ The runtime pipeline is a deterministic 3-node directed graph with no conditiona
 
 When `general` is returned, no Pinecone filter is applied; all 6 top-k results come from the full index.
 
-### 3.7 Answer Format & Epistemic Tags
+### 2.7 Answer Format & Epistemic Tags
 
 The system prompt imposes a strict tagging and citation protocol:
 
@@ -260,7 +239,7 @@ Confidence: HIGH ≥80% · MED 50–80% · LOW 20–50% · VERY LOW <20% · UNKN
 Citation:  [Dance To Your Maximum, Chapter X-Y, pp. Z–W]
 ```
 
-### 3.8 Streamlit UI Architecture
+### 2.8 Streamlit UI Architecture
 
 `app.py` imports the `ask()` function from `rag_chain.py`. The RAG graph is initialised once via a module-level singleton (`_rag_app`) and reused across all requests.
 
@@ -278,11 +257,11 @@ Citation:  [Dance To Your Maximum, Chapter X-Y, pp. Z–W]
 
 **Pending question pattern:** clicking a button sets `st.session_state.pending_question`; the main render loop reads it before reading `st.chat_input`, then calls `st.rerun()` to re-render with the answer appended.
 
-### 3.9 Observability
+### 2.9 Observability
 
 All LLM calls are traced to LangSmith automatically when `LANGCHAIN_TRACING_V2=true` and `LANGCHAIN_API_KEY` are set. The project name is `wellbeing-coach-rag-app-langchain`. Each full invocation (route + retrieve + generate) appears as a single parent trace with three child spans.
 
-### 3.10 Evaluation Pipeline
+### 2.10 Evaluation Pipeline
 
 Located in notebook Section 11. Runs in-notebook against the live Pinecone index.
 
@@ -292,7 +271,7 @@ Located in notebook Section 11. Runs in-notebook against the live Pinecone index
 - Pass threshold: ≥ 90% faithful (≥ 14 / 15)
 - Failures are printed with question, truncated answer, and judge reasoning
 
-## 4. Constraints & Non-Requirements
+## 3. Constraints & Non-Requirements
 
 | Constraint | Detail |
 |---|---|
