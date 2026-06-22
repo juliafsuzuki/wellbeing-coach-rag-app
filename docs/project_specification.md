@@ -3,7 +3,7 @@ Functional & technical specification for the DanceSport Wellbeing Coach RAG app
 
 ## 1. Purpose & Scope
 
-The DanceSport Wellbeing Coach is a single-source Retrieval-Augmented Generation (RAG) application that allows DanceSport athletes to ask natural-language questions about competition preparation, mental performance, and career development. All answers are grounded exclusively in the coaching workbook *Dance To Your Maximum* by Maximiliaan Winkelhuis, with inline citations to chapter and page.
+The DanceSport Wellbeing Coach is a single-source Retrieval-Augmented Generation (RAG) application that allows DanceSport athletes to ask questions in natural-language about showcase and competition preparation including Performance Readiness, Practice & Preparation, Musicality & Timing, Confidence & Stage Presence, Expression & Storytelling, and Mindset & Mental Performance. All answers are grounded exclusively in a book, *Dance To Your Maximum* by Maximiliaan Winkelhuis, with inline citations to chapter and page.
 
 ## 2. Functional Specification
 
