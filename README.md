@@ -90,7 +90,7 @@ The home page surfaces 6 pre-built categories with clickable example questions, 
 
 --
 
-Below: Lists of questions for 6 categories.
+### Lists of questions for 6 categories
 
 **🎯 Performance Readiness**
 - How do I know if I am ready to perform my showcase?|
@@ -131,7 +131,7 @@ Below: Lists of questions for 6 categories.
 
 Users can also type a free-text question in the persistent chat input at the bottom.
 
-## Answer format
+### Answer format
 
 Every claim is tagged and cited:
 
@@ -140,14 +140,14 @@ Every claim is tagged and cited:
 - **Citation:** `[Dance To Your Maximum, Chapter X-Y, pp. Z–W]`
 - **Refusal:** When no relevant context is retrieved, the answer begins with `"I don't have that in my knowledge base."` — no fabrication.
   
-## Scope and Constraints:
+## Scope and Constraints
 
 - Single corpus (no multi-document upload): all knowledge is derived from an e-book, Dance To Your Maximum. 
 - No cross-session memory (chat history clears on reload)
 - No re-ranking, no streaming
 - Local `.env` for secrets; single-process Streamlit deployment
 
-### Key capabilities:
+## Key capabilities
 
 - Conversational Q&A via a Streamlit web interface, accessible to non-technical users
 - Intelligent query routing (powered by LangGraph) that directs questions to the most relevant section of the knowledge base — competition day, season, or career
@@ -165,7 +165,7 @@ Every claim is tagged and cited:
 
 ## Evaluation
 
-15-question fixed test set with an LLM judge (`gpt-4.1-mini`, temp=0) plus manual spot-check. Target: ≥90% faithfulness (claims fully supported by retrieved context). PASS/FAIL is printed in-notebook. See [docs/specification.md §3.10](docs/specification.md) for details.
+15-question fixed test set with an LLM judge (`gpt-4.1-mini`, temp=0) plus manual spot-check. Target: ≥90% faithfulness (claims fully supported by retrieved context). PASS/FAIL is printed in-notebook.
 
 
 
