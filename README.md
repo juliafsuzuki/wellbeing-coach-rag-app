@@ -1,12 +1,29 @@
-# wellbeing-coach-rag-app
+# DanceSport Wellbeing Coach RAG Application
 
-DanceSport Competition Prep Wellbeing Coach RAG.
+## Overview
 
-A single-source RAG application that helps DanceSport athletes prepare for competitions and optimize performance readiness, grounded in *Dance To Your Maximum* by Maximiliaan Winkelhuis. Every answer is cited inline with chapter and page numbers.
+The DanceSport Wellbeing Coach is an AI-powered question-answering application designed to give competitive DanceSport athletes on-demand, evidence-based guidance on performance readiness, mental preparation, and career development. The system is built on Retrieval-Augmented Generation (RAG), grounding every response in a curated expert source rather than general model knowledge, ensuring accuracy and traceability.
 
-![DanceSport Wellbeing Coach home page](images/home_page.jpg)
+## Problem Statement
 
-## Stack
+Competitive dancers face a complex mix of physical, psychological, and strategic challenges across competition days, training seasons, and long-term careers. Expert coaching resources exist in written form but are not readily accessible in a conversational, queryable format. Athletes and coaches lack a fast, reliable way to surface specific, contextually relevant guidance in the moment they need it.
+
+## Solution
+
+The application ingests Dance To Your Maximum by Maximiliaan Winkelhuis — a structured workbook covering competition-day psychology, seasonal training, and career planning — and makes it fully searchable through natural language conversation. Users receive precise, cited answers grounded in the source material.
+
+## Scope and Constraints
+The system is intentionally single-source: all knowledge is derived from Dance To Your Maximum. Questions outside the scope of the book trigger a graceful refusal rather than a speculative answer. This design choice prioritises reliability over breadth.
+
+### Key capabilities:
+
+Conversational Q&A via a Streamlit web interface, accessible to non-technical users
+Intelligent query routing (powered by LangGraph) that directs questions to the most relevant section of the knowledge base — competition day, season, or career
+Structured retrieval from Pinecone vector store using semantic search and metadata filters (by part, chapter, and content type)
+Inline citations in every response, formatted as [Dance To Your Maximum, Chapter X-X, pp. XX–XX], enabling athletes and coaches to verify and deepen their reading
+Faithfulness evaluation pipeline using an LLM-as-judge approach, targeting ≥90% faithfulness against a 15-question benchmark test set
+
+## Technical Architecture
 
 - **Orchestration:** LangChain + LangGraph + LangSmith
 - **LLM:** OpenAI `gpt-4.1-mini` (routing/judge temp=0, generation temp=0.1)
@@ -16,6 +33,17 @@ A single-source RAG application that helps DanceSport athletes prepare for compe
 - **UI:** Streamlit (`app.py`)
 - **Notebook:** `1_wellbeing_coach__rag_app_langchain.ipynb`
 - **LangSmith project:** `wellbeing-coach-rag-app-langchain`
+
+<img width="275" height="134" alt="image" src="https://github.com/user-attachments/assets/ad6e478c-c8af-439f-b833-44c4a4a02228" />
+
+The ingestion pipeline applies hierarchical chunking tuned to the workbook's structure: tighter chunks for prose chapters (1,200 chars) and larger windows for tests, forms, and appendices (2,200 chars), preserving semantic coherence. Each chunk carries rich metadata — part scope, chapter, section type, and page range — enabling targeted retrieval and accurate citation generation.
+
+## Value Proposition
+
+Trustworthy outputs: every claim links back to a specific page range in the source text, eliminating hallucination risk on in-scope questions
+Domain-aware retrieval: routing and metadata filtering ensure the model draws from the right section of the knowledge base, not just the nearest vector
+Measurable quality: the built-in evaluation pipeline gives objective faithfulness metrics before any deployment or knowledge-base update
+Low barrier to use: Streamlit UI requires no technical knowledge from end users
 
 ## Documentation
 
