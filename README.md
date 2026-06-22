@@ -2,7 +2,7 @@
 
 ## Problem Statement
 
-DanceSport athletes navigate a complex mix of physical, mental, emotional, psychological, and strategic challenges while preparing for showcase performances and competitions. While expert coaching and valuable educational resources exist, access to them is often limited. Many insights remain buried in books, articles, and other written materials, making discovery largely a matter of chance.
+DanceSport athletes navigate a complex mix of physical, mental, emotional, psychological, and strategic challenges while preparing for showcase performances and competitions. While expert coaching and valuable educational resources exist, access to them is often limited and expensive. Many insights remain buried in books, articles, and other written materials, making discovery largely a matter of chance.
 
 Athletes need timely access to trusted guidance when they need it most. To support effective training and performance, coaching knowledge should be readily accessible through a conversational, queryable experience.
 
