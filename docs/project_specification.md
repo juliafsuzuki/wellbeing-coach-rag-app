@@ -1,4 +1,5 @@
 # Functional & Technical Specification
+Functional & technical specification for the DanceSport Wellbeing Coach RAG app
 
 ## 1. Purpose & Scope
 
