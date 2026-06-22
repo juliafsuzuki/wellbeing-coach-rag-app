@@ -1,13 +1,19 @@
 # DanceSport Wellbeing RAG Application
 
+<br />
+
 ## Project Objective
 > The RAG application, **DanceSport Wellbeing RAG Application** helps DanceSport athletes answer questions on showcase and competition preparation and performance readiness in a chatbot UI with grounded citations, safe fallback behavior, a target of 90% faithfulness, and under 8-second response time.
+
+<br />
 
 ## Problem Statement
 
 DanceSport athletes navigate a complex mix of physical, mental, emotional, psychological, and strategic challenges while preparing for showcase performances and competitions. While expert coaching and valuable educational resources exist, access to them is often limited and expensive. Many insights remain buried in books, articles, and other written materials, making discovery largely a matter of chance.
 
 Athletes need timely access to trusted guidance when they need it most. To support effective training and performance, coaching knowledge should be readily accessible through a conversational, queryable experience.
+
+<br />
 
 ## Solution Overview
 
@@ -66,6 +72,8 @@ All responses are grounded exclusively in a PDF e-book, *Dance To Your Maximum* 
 - **Transparent reasoning:** epistemic tags and confidence ratings surface the basis for every claim, letting users judge answers rather than accept them at face value.
 - **Measurable quality:** the built-in evaluation pipeline (Section 11) produces objective faithfulness metrics before any deployment or knowledge-base update.
 - **Low barrier to use:** the Streamlit UI requires no technical knowledge; pre-built question categories make it immediately useful without any prior familiarity with the source material.
+
+<br />
   
 ## Project Structure
 
