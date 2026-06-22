@@ -157,6 +157,7 @@ Every claim is tagged and cited:
 - Intelligent query routing (powered by LangGraph) that directs questions to the most relevant section of the knowledge base — competition day, season, or career
 - Structured retrieval from Pinecone vector store using semantic search and metadata filters (by part, chapter, and content type)
 - Questions outside the scope of the book trigger a graceful refusal rather than a speculative answer. This design choice prioritises reliability over breadth.
+- LangSmith traces every call at the chain level.
 - Inline citations in every response, formatted as [Dance To Your Maximum, Chapter X-X, pp. XX–XX], enabling athletes and coaches to verify and deepen their reading
 - Faithfulness evaluation pipeline using an LLM-as-judge approach, targeting ≥90% faithfulness against a 15-question benchmark test set
 
