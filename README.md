@@ -117,6 +117,8 @@ Before running the app, make sure you have:
 | Pinecone API key | [pinecone.io](https://www.pinecone.io/) — free Starter plan is sufficient |
 | Source PDF | *Dance To Your Maximum* by Maximiliaan Winkelhuis — place at `data/e-Book_dance-to-your-maximum.pdf` |
 
+<br />
+
 ## 2. Accessing the App
 
 **2.1. Clone the repository**
@@ -397,6 +399,7 @@ The home page surfaces 6 pre-built categories with clickable example questions, 
 <img width="378" height="692" alt="Screenshot 2026-06-21 222442" src="https://github.com/user-attachments/assets/819e36f8-1ae6-4d46-ae61-886fcf705d5b" />
 
 <br />
+<br />
 
 ### Lists of questions for 6 categories:
 
@@ -438,6 +441,8 @@ The home page surfaces 6 pre-built categories with clickable example questions, 
 - How can visualization improve my showcase performance?
 
 Users can also type a free-text question in the persistent chat input at the bottom.
+
+<br />
 
 ### Answer format:
 
