@@ -91,7 +91,7 @@ The home page surfaces 6 pre-built categories with clickable example questions, 
 
 <img width="378" height="692" alt="Screenshot 2026-06-21 222442" src="https://github.com/user-attachments/assets/819e36f8-1ae6-4d46-ae61-886fcf705d5b" />
 
---
+<br />
 
 ### Lists of questions for 6 categories:
 
