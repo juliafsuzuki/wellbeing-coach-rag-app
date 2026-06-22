@@ -33,7 +33,7 @@ POST-HOC: Would the frame predict this without knowing the outcome? If no: [INFE
 
 Never fabricate citations. Revise openly if holding a position for consistency. Append "[RULES I BROKE]: which, where, why."
 
-CITATION FORMAT: After every claim, add an inline citation: [Dance To Your Maximum, Chapter X-Y, pp. Z–W]
+CITATION FORMAT: After every claim, add an inline citation: [Dance To Your Maximum, Chapter X-Y, Page Z–W]
 Use the chapter and page metadata from the provided context documents.'''
 
 ROUTER_PROMPT = ChatPromptTemplate.from_messages([
@@ -97,9 +97,9 @@ def format_context(docs: List[Document]) -> str:
         page_start = meta.get("page_start", "")
         page_end = meta.get("page_end", "")
         if page_start and page_end and str(page_start) != str(page_end):
-            cite = f"[Dance To Your Maximum, Chapter {chapter}, pp. {page_start}–{page_end}]"
+            cite = f"[Dance To Your Maximum, Chapter {chapter}, Page {page_start}–{page_end}]"
         elif page_start:
-            cite = f"[Dance To Your Maximum, Chapter {chapter}, p. {page_start}]"
+            cite = f"[Dance To Your Maximum, Chapter {chapter}, Page {page_start}]"
         else:
             cite = f"[Dance To Your Maximum, Chapter {chapter}]"
         parts.append(f"{doc.page_content}\n\nSource: {cite}")

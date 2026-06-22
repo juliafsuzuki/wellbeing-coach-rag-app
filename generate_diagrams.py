@@ -614,7 +614,7 @@ make(
             'Inline citation after',
             'each claim:',
             '[Dance To Your Maximum,',
-            ' Chapter 1-2, pp. 21-24]',
+            ' Chapter 1-2, Page 21-24]',
         ], tags=['citations', 'tags']),
     ],
     code=[
