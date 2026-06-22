@@ -62,8 +62,8 @@ Low barrier to use: Streamlit UI requires no technical knowledge from end users
 
 ## Documentation
 
-- [Project Specification](docs/specification.md) — Functional & technical specifications: user stories, UI categories, RAG graph, routing, metadata schema, evaluation, constraints.
-- [Project Design](docs/project_design.md) — Architecture, chunking, retrieval, and evaluation decisions.
+- [Project Specification](docs/specification.md): Both functional & technical: user stories, UI categories, RAG graph, routing, metadata schema, evaluation, constraints.
+- [Project Design](docs/project_design.md): Architecture, chunking, retrieval, and evaluation decisions.
 
 ## Home page — question categories
 
