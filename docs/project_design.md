@@ -1,4 +1,5 @@
 # Design Decisions
+Full architecture, chunking, retrieval, and evaluation decisions for DanceSport Wellbeing Coach RAG app (LangChain + Pinecone + OpenAI + Streamlit)
 
 ## Stack
 - LangChain + LangGraph + LangSmith
