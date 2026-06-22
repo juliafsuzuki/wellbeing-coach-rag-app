@@ -9,7 +9,7 @@ The coach is designed to serve multiple roles, including a/an:
 - **Evidence-based advisor** that provides trusted guidance for showcase and competition success.
 - **DanceSport coach** that helps athletes train effectively, perform with confidence, and compete at their highest potential.
 - **Life coach** that empowers athletes to unlock their maximum potential both on and off the dance floor.
-- **Wellbeing and performance companion** that helps athletes strengthen the physical, mental, emotional, and performance dimensions of their DanceSport journey.
+- **Wellbeing and performance companion** that helps athletes strengthen the physical, mental, emotional, and performance dimensions.
 - **Personalized companion** that supports athletes in their pursuit of excellence, continuous improvement, and mastery.
 
 Athletes can ask questions and receive guidance across six categories: performance readiness, practice and preparation, musicality and timing, confidence and stage presence, expression and storytelling, and mindset and mental performance.
