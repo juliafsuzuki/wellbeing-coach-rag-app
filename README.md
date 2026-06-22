@@ -64,6 +64,98 @@ dancesport-wellbeing-rag-app/
 
 <br />
 
+# Quick Start
+
+## Prerequisites
+
+Before running the app, make sure you have:
+
+| Requirement | Notes |
+|---|---|
+| Python 3.9+ | [python.org](https://www.python.org/downloads/) |
+| Tesseract OCR | [Windows installer](https://github.com/UB-Mannheim/tesseract/wiki) · macOS: `brew install tesseract` · Linux: `sudo apt install tesseract-ocr` |
+| OpenAI API key | [platform.openai.com](https://platform.openai.com/) |
+| Pinecone API key | [pinecone.io](https://www.pinecone.io/) — free Starter plan is sufficient |
+| Source PDF | *Dance To Your Maximum* by Maximiliaan Winkelhuis — place at `data/e-Book_dance-to-your-maximum.pdf` |
+
+## Setup
+
+**1. Clone the repository**
+
+```bash
+git clone https://github.com/juliafsuzuki/dancesport-wellbeing-rag-app.git
+cd dancesport-wellbeing-rag-app
+```
+
+**2. Create a virtual environment and install dependencies**
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+source .venv/bin/activate     # macOS / Linux
+
+pip install -r requirements.txt
+```
+
+**3. Configure environment variables**
+
+Create a `.env` file in the project root with the following keys (never commit this file):
+
+```
+OPENAI_API_KEY=your-openai-key
+PINECONE_API_KEY=your-pinecone-key
+LANGCHAIN_API_KEY=              # optional — leave blank to disable LangSmith tracing
+LANGCHAIN_TRACING_V2=false
+LANGCHAIN_PROJECT=wellbeing-coach-rag-app-langchain
+```
+
+**4. Build the Pinecone index**
+
+Open and run the notebook end-to-end (Sections 1–10). This ingests the PDF via OCR, chunks the text, and uploads vectors to Pinecone. The OCR step takes several minutes on first run; results are cached to `data/ocr_cache.json` for all subsequent runs.
+
+```bash
+jupyter notebook 1_wellbeing_coach_rag_app_langchain.ipynb
+```
+
+> **Note:** Run the index-building step only once. Once the vectors are in Pinecone, you can skip straight to launching the app on future sessions.
+
+**5. Launch the chatbot**
+
+```bash
+streamlit run app.py
+```
+
+The app opens at **http://localhost:8501**.
+
+## Testing the App
+
+Once the app is running, here is how to explore it:
+
+**Option A — Click a pre-built question**
+
+The home page displays 6 question categories in a two-column grid. Click any question to send it immediately. Good questions to start with:
+
+- *"How do I manage performance anxiety or stage fright?"*
+- *"What is the best way to practice my showcase routine?"*
+- *"How can visualization improve my showcase performance?"*
+
+**Option B — Type your own question**
+
+Use the chat input at the bottom of the page to ask anything related to competition preparation and performance readiness.
+
+**What to expect in every response**
+
+- Each factual claim is tagged: `[KNOWN]`, `[INFERRED]`, `[COMPUTED]`, `[COMMON]`, `[FRAME]`, or `[GUESS]`
+- A confidence level (`HIGH` / `MED` / `LOW`) accompanies each claim
+- An inline citation points to the exact chapter and page: `[Dance To Your Maximum, Chapter 1-2, pp. 21–24]`
+- If the question falls outside the book's scope, the response opens with `"I don't have that in my knowledge base."` — no speculation
+
+**Option C — Run the evaluation pipeline**
+
+Open the notebook and run **Section 11** to measure faithfulness across the fixed 15-question benchmark. A PASS/FAIL result is printed for each question, targeting ≥ 90% overall.
+
+<br />
+
 # Technical Overview
 
 <img width="1672" height="941" alt="6-EndToEndWorkflow" src="https://github.com/user-attachments/assets/d0e37f8d-ef2b-4fdd-99c3-f166a12b1edb" />
