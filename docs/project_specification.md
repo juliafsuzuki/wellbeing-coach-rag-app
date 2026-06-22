@@ -6,9 +6,9 @@ Functional & technical specification for the DanceSport Wellbeing Coach RAG app
 The DanceSport Wellbeing Coach is a single-source Retrieval-Augmented Generation (RAG) application that enables DanceSport athletes to access trusted guidance on training, performance, and wellbeing by asking natural-language questions related to showcase and competition preparation.
 
 The coach is designed to serve multiple roles, including a/an:
-- **Evidence-based advisor** that provides trusted guidance for showcase and competition success.
+- **Evidence-based advisor** that provides trusted guidance specially for showcase and competition success.
 - **DanceSport coach** that helps athletes train effectively, perform with confidence, and compete at their highest potential.
-- **Life coach** that empowers athletes to unlock their maximum potential both on and off the dance floor.
+- **Full Potential coach** that empowers athletes to unlock their maximum potential both on and off the dance floor.
 - **Wellbeing and performance companion** that helps athletes strengthen the physical, mental, emotional, and performance dimensions.
 - **Personalized companion** that supports athletes in their pursuit of excellence, continuous improvement, and mastery.
 
