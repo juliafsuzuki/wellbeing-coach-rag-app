@@ -71,6 +71,212 @@ wellbeing-coach-rag-app/
 
 #### START
 
+### Pipeline Overview
+
+```
+Phase 1 — Ingest
+PDF → PyMuPDF (renders each page to grayscale image)
+    → Tesseract OCR (extracts text)
+    → JSON disk cache (data/ocr_cache.json)
+    → Hierarchical chunking (RecursiveCharacterTextSplitter)
+    → OpenAIEmbeddings (text-embedding-3-small)
+    → Pinecone index
+
+Phase 2 — RAG Pipeline (LangGraph, 3 nodes)
+User query → route node (classify part_scope + section_type)
+           → retrieve node (Pinecone similarity search)
+           → generate node (LLM answer with citations)
+
+Phase 3 — UI
+Streamlit (app.py) → renders categorised example questions + chat interface
+```
+
+---
+
+### 0. Getting Started
+
+```bash
+# Create and activate virtual environment
+python -m venv .venv
+.venv\Scripts\activate          # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment (edit manually — never commit)
+# .env must contain:
+OPENAI_API_KEY=...
+PINECONE_API_KEY=...
+LANGCHAIN_API_KEY=          # optional; leave blank to disable LangSmith tracing
+LANGCHAIN_TRACING_V2=false  # set true only when LANGCHAIN_API_KEY is populated
+LANGCHAIN_PROJECT=wellbeing-coach-rag-app-langchain
+
+# Ingest PDF and build Pinecone index
+jupyter notebook 1_wellbeing_coach_rag_app_langchain.ipynb
+
+# Launch chatbot UI
+streamlit run app.py
+```
+
+---
+
+### 1. PDF Ingestion via OCR
+
+**Issue encountered:** PyPDFLoader returned empty text for every page.
+
+**Root cause:** The source PDF (*Dance To Your Maximum*, Maximiliaan Winkelhuis) was produced with Adobe Acrobat 6.0 (2008) as a scanned image — each page is a photograph of text, not a selectable text layer. `PyPDFLoader` and `pypdf` can only read embedded text; they return nothing for image-based PDFs.
+
+**Solution:**
+
+1. PyMuPDF (`fitz`) renders each page to a grayscale image at 300 DPI.
+2. Tesseract (`pytesseract`) extracts text from the image via OCR.
+3. Results are cached to `data/ocr_cache.json` so OCR runs only once across sessions.
+
+```
+data/e-Book_dance-to-your-maximum.pdf  →  PyMuPDF  →  Tesseract  →  data/ocr_cache.json
+```
+
+---
+
+### 2. Chunking Strategy
+
+**Method:** Hierarchical, structure-aware chunking using `RecursiveCharacterTextSplitter`.
+
+| Section type | chunk_size | chunk_overlap | min_chunk_size |
+|---|---|---|---|
+| Prose chapters | 1 200 chars | 200 chars | 100 chars |
+| Tests / forms / appendices | 2 200 chars | 150 chars | 100 chars |
+
+Chunks below `min_chunk_size` are discarded.
+
+**Metadata stored per chunk:**
+
+| Field | Example values |
+|---|---|
+| `source` | `dance_to_your_maximum` |
+| `part` | `Part One` |
+| `part_scope` | `competition_day` · `season` · `career` |
+| `chapter` | `1-2` · `2-8` · `3-1` |
+| `chapter_title` | free text |
+| `section_type` | `prose` · `test` · `form` · `appendix` |
+| `page_start` | integer |
+| `page_end` | integer |
+| `chunk_id` | UUID |
+| `parent_id` | UUID |
+
+---
+
+### 3. Vector Database — Pinecone
+
+| Setting | Value |
+|---|---|
+| Index name | `wellbeing-coach-rag` |
+| Cloud / region | AWS `us-east-1` (serverless) |
+| Similarity metric | Cosine |
+| Embedding model | `text-embedding-3-small` |
+| Vector dimension | 1 536 |
+
+Metadata filters used at query time: `part_scope` and/or `section_type`.
+
+---
+
+### 4. Query Routing (LangGraph)
+
+A 3-node stateful graph (`route → retrieve → generate`) processes every query.
+
+**Route node** classifies the query into two dimensions using `gpt-4.1-mini` (temp=0):
+
+| Dimension | Options |
+|---|---|
+| `part_scope` | `competition_day` · `season` · `career` · `general` |
+| `section_type` | `prose` · `test` · `form` · `appendix` · `general` |
+
+**Retrieve node** uses the route to filter Pinecone results:
+
+- With a filter match → `top_k = 4` (metadata-filtered search)
+- No filter (general query) → `top_k = 6` (unfiltered)
+- Fallback to unfiltered `top_k = 6` if filtered search returns 0 results
+
+**Generate node** formats retrieved chunks as context, appends source citations, and calls `gpt-4.1-mini` (temp=0.1) to produce the final answer.
+
+---
+
+### 5. Chatbot UI — Streamlit
+
+**File:** `app.py`
+
+- Page icon: 💃, layout: centered
+- 6 categorised question panels in a 2-column grid (always visible, above chat history)
+- Questions trigger via `st.session_state.pending_question` to avoid conflicts with `st.chat_input`
+- Chat history persisted in `st.session_state.messages` for the session lifetime
+
+**Categories:** Performance Readiness · Practice & Preparation · Musicality & Timing · Confidence & Stage Presence · Expression & Storytelling · Mindset & Mental Performance
+
+---
+
+### 6. Tagging & Citation
+
+Every claim in the generated answer must carry an explicit tag and an inline source citation.
+
+**Claim tags:**
+
+| Tag | Meaning |
+|---|---|
+| `[KNOWN]` | Established training fact |
+| `[COMPUTED]` | Calculated value |
+| `[INFERRED]` | Logical deduction from context |
+| `[COMMON]` | Standard domain knowledge |
+| `[FRAME]` | Symbolic system (coherent ≠ real-world claim) |
+| `[GUESS]` | No supporting basis |
+
+**Citation format** (inline, after each claim):
+
+```
+[Dance To Your Maximum, Chapter 1-2, pp. 21–24]
+```
+
+Chapter numbers follow the book's own numbering scheme (e.g. `1-2`, `2-8`, `3-1`). Page range uses `pp.` for multi-page spans and `p.` for a single page. Citations are drawn from chunk metadata (`chapter`, `page_start`, `page_end`) — never fabricated.
+
+---
+
+### 7. Evaluation
+
+**Method:** Automated LLM-as-judge using `gpt-4.1-mini`, run inside the notebook.
+
+| Setting | Value |
+|---|---|
+| Test set | 15 fixed questions |
+| Primary metric | Faithfulness — % of claims fully supported by retrieved context |
+| Target | ≥ 90% faithful answers |
+| Secondary check | Manual spot-check on a representative subset |
+
+The evaluation pipeline is reproducible and self-contained in the notebook (Section 11).
+
+---
+
+### 8. Observability — LangSmith
+
+| Setting | Value |
+|---|---|
+| Project name | `wellbeing-coach-rag-app-langchain` |
+| Status | **Disabled** (`LANGCHAIN_TRACING_V2=false`) |
+| Activation | Set `LANGCHAIN_TRACING_V2=true` and populate `LANGCHAIN_API_KEY` in `.env` |
+
+---
+
+### AI Stack
+
+| Layer | Tool / Model |
+|---|---|
+| Orchestration | LangChain + LangGraph (stateful graph) + LangSmith (observability) |
+| LLM — routing & judge | `gpt-4.1-mini`, temperature=0 |
+| LLM — generation | `gpt-4.1-mini`, temperature=0.1 |
+| Embeddings | OpenAI `text-embedding-3-small` (dim=1 536) |
+| Vector store | Pinecone Serverless — index `wellbeing-coach-rag`, cosine, AWS us-east-1 |
+| PDF rendering | PyMuPDF (`fitz`) |
+| OCR | Tesseract (`pytesseract`) |
+| UI | Streamlit (`app.py`) |
+| Notebook | `1_wellbeing_coach_rag_app_langchain.ipynb` |
 
 #### END
 
