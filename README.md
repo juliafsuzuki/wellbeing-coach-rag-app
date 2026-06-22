@@ -80,6 +80,8 @@ wellbeing-coach-rag-app/
 
 The ingestion pipeline applies hierarchical chunking tuned to the workbook's structure: tighter chunks for prose chapters (1,200 chars) and larger windows for tests, forms, and appendices (2,200 chars), preserving semantic coherence. Each chunk carries rich metadata — part scope, chapter, section type, and page range — enabling targeted retrieval and accurate citation generation.
 
+<br />
+
 ## Home page / GUI
 
 The home page surfaces 6 pre-built categories with clickable example questions, arranged in a two-column grid.
