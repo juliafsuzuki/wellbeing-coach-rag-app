@@ -74,7 +74,7 @@ The PDF is fully image-based (scanned; no text layer). Standard PDF loaders retu
 
 ## Citations
 
-Format: `[Dance To Your Maximum, Chapter 1-2, Page. 21–24]`  
+Format: `[Dance To Your Maximum, Chapter 1-2, Page 21–24]`  
 Inline in answer body after each claim. Drawn from chunk metadata — never fabricated.
 
 ## Evaluation
