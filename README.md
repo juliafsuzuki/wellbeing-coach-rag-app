@@ -413,7 +413,7 @@ Every claim is tagged, confidence-rated, and cited.
 
 **Confidence rating** — appended to each claim: `HIGH` (≥80%) · `MED` (50–80%) · `LOW` (20–50%) · `VERY LOW` (<20%) · `UNKNOWN`. `[FRAME]` and `[GUESS]` claims are capped at `LOW`.
 
-**Citation** — inline after every claim: `[Dance To Your Maximum, Chapter 1-2, pp. 21–24]`
+**Citation** — inline after every claim: `[Dance To Your Maximum, Chapter 1-2, Page 21–24]`
 
 **Refusal** — if the retrieved context does not contain a sufficient answer, the response opens with `"I don't have that in my knowledge base."` No speculation, no fabrication.
 
