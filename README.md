@@ -38,8 +38,36 @@ All responses are grounded exclusively in a PDF e-book, *Dance To Your Maximum* 
 - Part Three: The Dancer’s Career
 - Numbered chapters such as 1-2 Stress and preparations, 1-4 The Nine Step Connection Model, 2-3 Planning your choreography, 2-8 Exercises during the season, and 3-1 Career planning
 - Workbook sections including personal tests, questionnaires, evaluation forms, and appendices
+
+### Scope and Constraints
+
+- **Single corpus:** all knowledge is derived from one source — the e-book *Dance To Your Maximum*. No multi-document upload.
+- **No multi-turn retrieval awareness:** each question is processed independently. Chat history is displayed in the UI but is not passed into the retrieval or generation steps.
+- **No cross-session memory:** chat history clears on page reload.
+- **No re-ranking or streaming:** retrieval returns top-k results by cosine similarity; responses are returned in full once generation completes.
+- **Secrets via `.env`:** API keys are never hard-coded; the app runs as a single-process Streamlit deployment.
+
+### Key capabilities
+
+- **Conversational Q&A** via a Streamlit web interface, accessible to non-technical users
+- **Intelligent query routing** (LangGraph) classifies each question on two dimensions — part scope (`competition_day`, `season`, `career`) and content type (`prose`, `test`, `form`, `appendix`) — and applies matching metadata filters before retrieval
+- **Semantic retrieval** from Pinecone vector store with metadata filtering; falls back to unfiltered search when a filtered query returns no results
+- **Image-based PDF support:** the source e-book is fully scanned (no text layer); PyMuPDF + Tesseract OCR pipeline extracts text with results cached to disk after the first run
+- **Epistemic tagging:** every claim is labelled `[KNOWN]`, `[COMPUTED]`, `[INFERRED]`, `[COMMON]`, `[FRAME]`, or `[GUESS]`, with a confidence rating — making the reasoning transparent and auditable
+- **Inline citations** in every response — `[Dance To Your Maximum, Chapter X-Y, Page Z–W]` — drawn from chunk metadata, never fabricated
+- **Graceful refusal:** questions outside the scope of the retrieved context produce `"I don't have that in my knowledge base."` rather than a speculative answer
+- **Faithfulness evaluation pipeline** using an LLM-as-judge (`gpt-4.1-mini`, temp=0) over a fixed 15-question benchmark, targeting ≥90% faithfulness
+- **LangSmith observability** integrated for full chain tracing; currently disabled — activate by setting `LANGCHAIN_TRACING_V2=true` and supplying a `LANGCHAIN_API_KEY`
+
+### Value Proposition
+
+- **Trustworthy outputs:** every claim links back to a specific page range in the source text, minimising hallucination risk on in-scope questions. Out-of-scope questions are refused rather than answered speculatively.
+- **Domain-aware retrieval:** two-dimensional routing (part scope + content type) and metadata filtering ensure the model draws from the right section of the knowledge base, not just the nearest vector.
+- **Transparent reasoning:** epistemic tags and confidence ratings surface the basis for every claim, letting users judge answers rather than accept them at face value.
+- **Measurable quality:** the built-in evaluation pipeline (Section 11) produces objective faithfulness metrics before any deployment or knowledge-base update.
+- **Low barrier to use:** the Streamlit UI requires no technical knowledge; pre-built question categories make it immediately useful without any prior familiarity with the source material.
   
-## Repository layout
+## Project Structure
 
 ```
 dancesport-wellbeing-rag-app/
@@ -69,7 +97,7 @@ dancesport-wellbeing-rag-app/
 
 # How to access and test the RAG application
 
-## Prerequisites
+## 1. Prerequisites
 
 Before running the app, make sure you have:
 
@@ -81,16 +109,16 @@ Before running the app, make sure you have:
 | Pinecone API key | [pinecone.io](https://www.pinecone.io/) — free Starter plan is sufficient |
 | Source PDF | *Dance To Your Maximum* by Maximiliaan Winkelhuis — place at `data/e-Book_dance-to-your-maximum.pdf` |
 
-## Accessing the App
+## 2. Accessing the App
 
-**1. Clone the repository**
+**2.1. Clone the repository**
 
 ```bash
 git clone https://github.com/juliafsuzuki/dancesport-wellbeing-rag-app.git
 cd dancesport-wellbeing-rag-app
 ```
 
-**2. Create a virtual environment and install dependencies**
+**2.2. Create a virtual environment and install dependencies**
 
 ```bash
 python -m venv .venv
@@ -100,7 +128,7 @@ source .venv/bin/activate     # macOS / Linux
 pip install -r requirements.txt
 ```
 
-**3. Configure environment variables**
+**2.3. Configure environment variables**
 
 Create a `.env` file in the project root with the following keys (never commit this file):
 
@@ -112,7 +140,7 @@ LANGCHAIN_TRACING_V2=false
 LANGCHAIN_PROJECT=wellbeing-coach-rag-app-langchain
 ```
 
-**4. Build the Pinecone index**
+**2.4. Build the Pinecone index**
 
 Open and run the notebook end-to-end (Sections 1–10). This ingests the PDF via OCR, chunks the text, and uploads vectors to Pinecone. The OCR step takes several minutes on first run; results are cached to `data/ocr_cache.json` for all subsequent runs.
 
@@ -122,7 +150,7 @@ jupyter notebook 1_wellbeing_coach_rag_app_langchain.ipynb
 
 > **Note:** Run the index-building step only once. Once the vectors are in Pinecone, you can skip straight to launching the app on future sessions.
 
-**5. Launch the chatbot**
+**2.5. Launch the chatbot**
 
 ```bash
 streamlit run app.py
@@ -130,7 +158,9 @@ streamlit run app.py
 
 The app opens at **http://localhost:8501**.
 
-## Testing the App
+<br />
+
+## 3. Testing the App
 
 Once the app is running, here is how to explore it:
 
@@ -350,6 +380,8 @@ The evaluation pipeline is reproducible and self-contained in the notebook (Sect
 
 <!-- END -->
 
+<br />
+
 # Chatbot UI
 
 The home page surfaces 6 pre-built categories with clickable example questions, arranged in a two-column grid.
@@ -423,34 +455,6 @@ Every claim is tagged, confidence-rated, and cited.
 **Self-audit** — the model appends `[RULES I BROKE]: which, where, why` whenever it detects a rule violation in its own output.
 
 <br />
-
-## Scope and Constraints
-
-- **Single corpus:** all knowledge is derived from one source — the e-book *Dance To Your Maximum*. No multi-document upload.
-- **No multi-turn retrieval awareness:** each question is processed independently. Chat history is displayed in the UI but is not passed into the retrieval or generation steps.
-- **No cross-session memory:** chat history clears on page reload.
-- **No re-ranking or streaming:** retrieval returns top-k results by cosine similarity; responses are returned in full once generation completes.
-- **Secrets via `.env`:** API keys are never hard-coded; the app runs as a single-process Streamlit deployment.
-
-## Key capabilities
-
-- **Conversational Q&A** via a Streamlit web interface, accessible to non-technical users
-- **Intelligent query routing** (LangGraph) classifies each question on two dimensions — part scope (`competition_day`, `season`, `career`) and content type (`prose`, `test`, `form`, `appendix`) — and applies matching metadata filters before retrieval
-- **Semantic retrieval** from Pinecone vector store with metadata filtering; falls back to unfiltered search when a filtered query returns no results
-- **Image-based PDF support:** the source e-book is fully scanned (no text layer); PyMuPDF + Tesseract OCR pipeline extracts text with results cached to disk after the first run
-- **Epistemic tagging:** every claim is labelled `[KNOWN]`, `[COMPUTED]`, `[INFERRED]`, `[COMMON]`, `[FRAME]`, or `[GUESS]`, with a confidence rating — making the reasoning transparent and auditable
-- **Inline citations** in every response — `[Dance To Your Maximum, Chapter X-Y, Page Z–W]` — drawn from chunk metadata, never fabricated
-- **Graceful refusal:** questions outside the scope of the retrieved context produce `"I don't have that in my knowledge base."` rather than a speculative answer
-- **Faithfulness evaluation pipeline** using an LLM-as-judge (`gpt-4.1-mini`, temp=0) over a fixed 15-question benchmark, targeting ≥90% faithfulness
-- **LangSmith observability** integrated for full chain tracing; currently disabled — activate by setting `LANGCHAIN_TRACING_V2=true` and supplying a `LANGCHAIN_API_KEY`
-
-## Value Proposition
-
-- **Trustworthy outputs:** every claim links back to a specific page range in the source text, minimising hallucination risk on in-scope questions. Out-of-scope questions are refused rather than answered speculatively.
-- **Domain-aware retrieval:** two-dimensional routing (part scope + content type) and metadata filtering ensure the model draws from the right section of the knowledge base, not just the nearest vector.
-- **Transparent reasoning:** epistemic tags and confidence ratings surface the basis for every claim, letting users judge answers rather than accept them at face value.
-- **Measurable quality:** the built-in evaluation pipeline (Section 11) produces objective faithfulness metrics before any deployment or knowledge-base update.
-- **Low barrier to use:** the Streamlit UI requires no technical knowledge; pre-built question categories make it immediately useful without any prior familiarity with the source material.
 
 ## Evaluation
 
