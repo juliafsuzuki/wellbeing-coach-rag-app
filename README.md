@@ -40,8 +40,7 @@ Faithfulness evaluation pipeline using an LLM-as-judge approach, targeting ≥90
 
 ## Technical Architecture
 
-<img width="1672" height="941" alt="6-PutItAllTogether" src="https://github.com/user-attachments/assets/68d938b5-ef90-4144-9d54-a91263d53df7" />
-
+<img width="1672" height="941" alt="6-EndToEndWorkflow" src="https://github.com/user-attachments/assets/d0e37f8d-ef2b-4fdd-99c3-f166a12b1edb" />
 
 - **Orchestration:** LangChain + LangGraph + LangSmith
 - **LLM:** OpenAI `gpt-4.1-mini` (routing/judge temp=0, generation temp=0.1)
