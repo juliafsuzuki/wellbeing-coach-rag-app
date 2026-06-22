@@ -27,7 +27,60 @@ Athletes can ask questions and receive guidance across six categories:
 
 All responses are grounded exclusively in Dance To Your Maximum by Maximiliaan Winkelhuis and include inline citations to the relevant chapter and page, enabling athletes to verify the source material and explore the concepts in greater depth.
 
-## Home page 
+## Repository layout
+
+```
+wellbeing-coach-rag-app/
+├── app.py                          # Streamlit chat UI
+├── rag_chain.py                    # RAG graph, router, retriever, generator
+├── 1_wellbeing_coach__rag_app_langchain.ipynb  # End-to-end pipeline + evaluation
+├── data/
+│   ├── e-Book_dance-to-your-maximum.pdf        # Source corpus (316 pages, image-based)
+│   └── ocr_cache.json                          # OCR output cache (run-once)
+├── images/
+│   └── home_page.jpg                           # Home page screenshot
+├── docs/
+│   ├── specification.md                        # Functional & technical specification
+│   ├── project_design.md                       # Architecture & design decisions
+│   ├── MEMORY.md                               # Memory index
+│   └── reference_github.md                     # Repo reference
+├── generate_diagrams.py            # Diagram generation utility
+└── .venv/                          # Python virtual environment
+```
+
+## Documentation
+
+- [Project Specification](docs/specification.md): Both functional & technical: user stories, UI categories, RAG graph, routing, metadata schema, evaluation, constraints.
+- [Project Design](docs/project_design.md): Architecture, chunking, retrieval, and evaluation decisions.
+
+---
+
+## Technical Architecture
+
+<img width="1672" height="941" alt="6-EndToEndWorkflow" src="https://github.com/user-attachments/assets/d0e37f8d-ef2b-4fdd-99c3-f166a12b1edb" />
+
+### Getting started
+1. Create a virtual environment: `python -m venv .venv`
+2. Activate it and install dependencies.
+3. Populate `.env` with `OPENAI_API_KEY`, `PINECONE_API_KEY`, and `LANGCHAIN_API_KEY`.
+4. Run the notebook to ingest the PDF and build the Pinecone index.
+5. Launch the UI: `streamlit run app.py`
+
+### AI Stack
+- **Orchestration:** LangChain + LangGraph + LangSmith
+- **LLM:** OpenAI `gpt-4.1-mini` (routing/judge temp=0, generation temp=0.1)
+- **Embeddings:** OpenAI `text-embedding-3-small` (dim=1536)
+- **Vector store:** Pinecone Serverless — index `wellbeing-coach-rag`, cosine, AWS `us-east-1`
+- **PDF + OCR:** PyMuPDF (fitz) + Tesseract (pytesseract)
+- **UI:** Streamlit (`app.py`)
+- **Notebook:** `1_wellbeing_coach__rag_app_langchain.ipynb`
+- **LangSmith project:** `wellbeing-coach-rag-app-langchain`
+
+<img width="275" height="134" alt="image" src="https://github.com/user-attachments/assets/ad6e478c-c8af-439f-b833-44c4a4a02228" />
+
+The ingestion pipeline applies hierarchical chunking tuned to the workbook's structure: tighter chunks for prose chapters (1,200 chars) and larger windows for tests, forms, and appendices (2,200 chars), preserving semantic coherence. Each chunk carries rich metadata — part scope, chapter, section type, and page range — enabling targeted retrieval and accurate citation generation.
+
+## Home page / GUI
 
 The home page surfaces 6 pre-built categories with clickable example questions, arranged in a two-column grid.
 
@@ -85,83 +138,32 @@ Every claim is tagged and cited:
 - **Citation:** `[Dance To Your Maximum, Chapter X-Y, pp. Z–W]`
 - **Refusal:** When no relevant context is retrieved, the answer begins with `"I don't have that in my knowledge base."` — no fabrication.
   
-## Technical Architecture
+## Scope and Constraints:
 
-<img width="1672" height="941" alt="6-EndToEndWorkflow" src="https://github.com/user-attachments/assets/d0e37f8d-ef2b-4fdd-99c3-f166a12b1edb" />
-
-- **Orchestration:** LangChain + LangGraph + LangSmith
-- **LLM:** OpenAI `gpt-4.1-mini` (routing/judge temp=0, generation temp=0.1)
-- **Embeddings:** OpenAI `text-embedding-3-small` (dim=1536)
-- **Vector store:** Pinecone Serverless — index `wellbeing-coach-rag`, cosine, AWS `us-east-1`
-- **PDF + OCR:** PyMuPDF (fitz) + Tesseract (pytesseract)
-- **UI:** Streamlit (`app.py`)
-- **Notebook:** `1_wellbeing_coach__rag_app_langchain.ipynb`
-- **LangSmith project:** `wellbeing-coach-rag-app-langchain`
-
-<img width="275" height="134" alt="image" src="https://github.com/user-attachments/assets/ad6e478c-c8af-439f-b833-44c4a4a02228" />
-
-The ingestion pipeline applies hierarchical chunking tuned to the workbook's structure: tighter chunks for prose chapters (1,200 chars) and larger windows for tests, forms, and appendices (2,200 chars), preserving semantic coherence. Each chunk carries rich metadata — part scope, chapter, section type, and page range — enabling targeted retrieval and accurate citation generation.
-
-## Scope and Constraints
-The system is intentionally single-source: all knowledge is derived from Dance To Your Maximum. Questions outside the scope of the book trigger a graceful refusal rather than a speculative answer. This design choice prioritises reliability over breadth.
+- Single corpus (no multi-document upload): all knowledge is derived from an e-book, Dance To Your Maximum. 
+- No cross-session memory (chat history clears on reload)
+- No re-ranking, no streaming
+- Local `.env` for secrets; single-process Streamlit deployment
 
 ### Key capabilities:
 
-Conversational Q&A via a Streamlit web interface, accessible to non-technical users
-Intelligent query routing (powered by LangGraph) that directs questions to the most relevant section of the knowledge base — competition day, season, or career
-Structured retrieval from Pinecone vector store using semantic search and metadata filters (by part, chapter, and content type)
-Inline citations in every response, formatted as [Dance To Your Maximum, Chapter X-X, pp. XX–XX], enabling athletes and coaches to verify and deepen their reading
-Faithfulness evaluation pipeline using an LLM-as-judge approach, targeting ≥90% faithfulness against a 15-question benchmark test set
+- Conversational Q&A via a Streamlit web interface, accessible to non-technical users
+- Intelligent query routing (powered by LangGraph) that directs questions to the most relevant section of the knowledge base — competition day, season, or career
+- Structured retrieval from Pinecone vector store using semantic search and metadata filters (by part, chapter, and content type)
+- Questions outside the scope of the book trigger a graceful refusal rather than a speculative answer. This design choice prioritises reliability over breadth.
+- Inline citations in every response, formatted as [Dance To Your Maximum, Chapter X-X, pp. XX–XX], enabling athletes and coaches to verify and deepen their reading
+- Faithfulness evaluation pipeline using an LLM-as-judge approach, targeting ≥90% faithfulness against a 15-question benchmark test set
 
 ## Value Proposition
 
-Trustworthy outputs: every claim links back to a specific page range in the source text, eliminating hallucination risk on in-scope questions
-Domain-aware retrieval: routing and metadata filtering ensure the model draws from the right section of the knowledge base, not just the nearest vector
-Measurable quality: the built-in evaluation pipeline gives objective faithfulness metrics before any deployment or knowledge-base update
-Low barrier to use: Streamlit UI requires no technical knowledge from end users
-
-## Documentation
-
-- [Project Specification](docs/specification.md): Both functional & technical: user stories, UI categories, RAG graph, routing, metadata schema, evaluation, constraints.
-- [Project Design](docs/project_design.md): Architecture, chunking, retrieval, and evaluation decisions.
-
-## Repository layout
-
-```
-wellbeing-coach-rag-app/
-├── app.py                          # Streamlit chat UI
-├── rag_chain.py                    # RAG graph, router, retriever, generator
-├── 1_wellbeing_coach__rag_app_langchain.ipynb  # End-to-end pipeline + evaluation
-├── data/
-│   ├── e-Book_dance-to-your-maximum.pdf        # Source corpus (316 pages, image-based)
-│   └── ocr_cache.json                          # OCR output cache (run-once)
-├── images/
-│   └── home_page.jpg                           # Home page screenshot
-├── docs/
-│   ├── specification.md                        # Functional & technical specification
-│   ├── project_design.md                       # Architecture & design decisions
-│   ├── MEMORY.md                               # Memory index
-│   └── reference_github.md                     # Repo reference
-├── generate_diagrams.py            # Diagram generation utility
-└── .venv/                          # Python virtual environment
-```
-
-## Getting started
-
-1. Create a virtual environment: `python -m venv .venv`
-2. Activate it and install dependencies.
-3. Populate `.env` with `OPENAI_API_KEY`, `PINECONE_API_KEY`, and `LANGCHAIN_API_KEY`.
-4. Run the notebook to ingest the PDF and build the Pinecone index.
-5. Launch the UI: `streamlit run app.py`
+- Trustworthy outputs: every claim links back to a specific page range in the source text, eliminating hallucination risk on in-scope questions
+- Domain-aware retrieval: routing and metadata filtering ensure the model draws from the right section of the knowledge base, not just the nearest vector
+- Measurable quality: the built-in evaluation pipeline gives objective faithfulness metrics before any deployment or knowledge-base update
+- Low barrier to use: Streamlit UI requires no technical knowledge from end users
 
 ## Evaluation
 
 15-question fixed test set with an LLM judge (`gpt-4.1-mini`, temp=0) plus manual spot-check. Target: ≥90% faithfulness (claims fully supported by retrieved context). PASS/FAIL is printed in-notebook. See [docs/specification.md §3.10](docs/specification.md) for details.
 
-## Constraints
 
-- Single corpus (no multi-document upload)
-- No cross-session memory (chat history clears on reload)
-- No re-ranking, no streaming
-- Local `.env` for secrets; single-process Streamlit deployment
 
