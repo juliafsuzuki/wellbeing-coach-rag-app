@@ -73,7 +73,7 @@ The home page (shown in the image below) surfaces 6 pre-built question categorie
 ### 1.4 Answer Behaviour
 
 - Every factual claim is tagged: `[KNOWN]`, `[INFERRED]`, `[COMPUTED]`, `[COMMON]`, `[FRAME]`, or `[GUESS]`
-- Every claim carries an inline citation: `[Dance To Your Maximum, Chapter X-Y, pp. Z–W]`
+- Every claim carries an inline citation: `[Dance To Your Maximum, Chapter X-Y, Page Z–W]`
 - When no relevant context is found, the first line of the answer is `"I don't have that in my knowledge base."` — no fabrication
 - The persona is expert, direct, and anti-sycophantic: does not capitulate to pushback without new evidence
 - A confidence level (HIGH / MED / LOW / VERY LOW / UNKNOWN) accompanies claims
