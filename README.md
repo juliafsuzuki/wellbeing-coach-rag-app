@@ -1,5 +1,11 @@
 # DanceSport Wellbeing Coach RAG Application
 
+## Problem Statement
+
+DanceSport athletes navigate a complex mix of physical, mental, emotional, psychological, and strategic challenges while preparing for showcase performances and competitions. While expert coaching and valuable educational resources exist, access to them is often limited. Many insights remain buried in books, articles, and other written materials, making discovery largely a matter of chance.
+
+Athletes need timely access to trusted guidance when they need it most. To support effective training and performance, coaching knowledge should be readily accessible through a conversational, queryable experience.
+
 ## Solution Overview
 
 The DanceSport Wellbeing Coach is a single-source Retrieval-Augmented Generation (RAG) application that enables DanceSport athletes to access trusted guidance on training, performance, and wellbeing by asking natural-language questions related to showcase and competition preparation.
@@ -20,10 +26,6 @@ Athletes can ask questions and receive guidance across six categories:
 6. Mindset and mental performance
 
 All responses are grounded exclusively in Dance To Your Maximum by Maximiliaan Winkelhuis and include inline citations to the relevant chapter and page, enabling athletes to verify the source material and explore the concepts in greater depth.
-
-## Problem Statement
-
-Competitive dancers face a complex mix of physical, psychological, and strategic challenges across competition days, training seasons, and long-term careers. Expert coaching resources exist in written form but are not readily accessible in a conversational, queryable format. Athletes and coaches lack a fast, reliable way to surface specific, contextually relevant guidance in the moment they need it.
 
 ## Scope and Constraints
 The system is intentionally single-source: all knowledge is derived from Dance To Your Maximum. Questions outside the scope of the book trigger a graceful refusal rather than a speculative answer. This design choice prioritises reliability over breadth.
