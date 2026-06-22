@@ -63,6 +63,3 @@ Inline in answer body after each claim.
 ## Environment
 - .env file: user fills manually with OPENAI_API_KEY, PINECONE_API_KEY, LANGCHAIN_API_KEY
 - Virtual environment: .venv
-
-**Why:** Single-source RAG for DanceSport athletes on competition prep and performance readiness.
-**How to apply:** All retrieval, routing, and chunking decisions should be tailored to this PDF's structure (workbook with numbered sections, tests, forms).
