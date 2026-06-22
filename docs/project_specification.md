@@ -19,7 +19,10 @@ A DanceSport athlete (amateur or professional) preparing for a competition, show
 
 ### 1.3 Question Categories (UI)
 
-The home page surfaces 6 pre-built question categories with clickable example questions. The layout is a two-column grid (see [`images/home_page.jpg`](../images/home_page.jpg)):
+The home page (shown in the image below) surfaces 6 pre-built question categories with clickable example questions. The layout is a two-column grid.
+
+<img width="378" height="692" alt="image" src="https://github.com/user-attachments/assets/8e576312-4a97-455e-a14a-4714b36bc1b7" />
+
 
 - **Left column:** Performance Readiness, Practice & Preparation, Musicality & Timing
 - **Right column:** Confidence & Stage Presence, Expression & Storytelling, Mindset & Mental Performance
