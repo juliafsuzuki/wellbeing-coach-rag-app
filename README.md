@@ -65,78 +65,14 @@ wellbeing-coach-rag-app/
 
 <br />
 
-## Technical Overview
+# Technical Overview
 
 <img width="1672" height="941" alt="6-EndToEndWorkflow" src="https://github.com/user-attachments/assets/d0e37f8d-ef2b-4fdd-99c3-f166a12b1edb" />
 
-<br />
-
-### Phase 1: Ingetion + Retrieve
-PDF → PyPDFLoader → RecursiveCharacterTextSplitter → OpenAIEmbeddings → Pinecone
-
-### Phase 2: RAG Pipeline
-OCR ingestion → hierarchical chunking → Pinecone indexing → LangGraph query chain
-
-### Phase 3: Generate + Response
-User query → answer + citations → Streamlit
-
-### 0. Getting started:
-1. Create a virtual environment: `python -m venv .venv`
-2. Activate it and install dependencies.
-3. Populate `.env` with `OPENAI_API_KEY`, `PINECONE_API_KEY`, and `LANGCHAIN_API_KEY`.
-4. Run the notebook to ingest the PDF and build the Pinecone index.
-5. Launch the UI: `streamlit run app.py`
-
-### 1. Chunking strategy:
-Method: Hierarchical chunking
-
-### 2. Vector Database using Pinecone (indexing + Embedding)
-Method: 
-- Store chunks in Pinecone with cosine similarity.
-- Use OpenAI embeddings with text-embedding-3-small.
-- Pinecone index dimension should match the embedding model.
-
-### 3. Retrieval: PDF Ingestion via OCR
-- Issue encountered: The PDF is image-based (scanned pages, no embedded text layer), so the initial method, **PyPDFLoader** returned empty text as it can only read texts.
-- Root cause: The PDF e-book was created with Adobe Acrobat 6.0 (2008) as a scanned image: each page is a photo of text, not selectable text. PyPDFLoader and pypdf can only read text layers, so they return nothing. 
-- Solution: Used **pymupdf** to render each page to a grayscale image and **Tesseract** to extract text via OCR.
-
-### 4. Chatbot UI:
-Tool: Streamlit
-
-### 5. Tagging & Citation
-Instruction: Use Inline citations in the answer body
-Syntax: [Source, Part #, Chapter #, Page # ] 
-Example: The book frames competition stress as a reaction to situations the dancer cannot control, including judges, competitors, and outcomes, and links that stress to the Autonomous Nervous System. [Dance To Your Maximum, Chapter 1, Page. 21–24]
-
-<img width="416" height="136" alt="image" src="https://github.com/user-attachments/assets/fab64adc-be92-40af-928b-ce57b6bf4804" />
+#### START
 
 
-### 6. Evaluation
-Plan: The plan is to measure faithfulness with a reproducible in-notebook evaluation pipeline using an automated LLM judge over a fixed 15-question test set, plus manual spot-checking on a smaller subset. The main metric will be the percentage of answers whose claims are fully supported by retrieved context, with a target of at least 90% faithful answers using RAGAS (automated with an LLM judge).
-
-### 7. Environment
-- Create an .env file and updated it manually with the key information.  
-
-### 8. Observability 
-Tool: LangSmith
-Project name: wellbeing-coach-rag-app-langchain
-
-### AI Stack:
-- **Orchestration:** LangChain + LangGraph + LangSmith
-- **LLM:** OpenAI `gpt-4.1-mini` (routing/judge temp=0, generation temp=0.1)
-- **Embeddings:** OpenAI `text-embedding-3-small` (dim=1536)
-- **Vector store:** Pinecone Serverless — index `wellbeing-coach-rag`, cosine, AWS `us-east-1`
-- **PDF + OCR:** PyMuPDF (fitz) + Tesseract (pytesseract)
-- **UI:** Streamlit (`app.py`)
-- **Notebook:** `1_wellbeing_coach__rag_app_langchain.ipynb`
-- **LangSmith project:** `wellbeing-coach-rag-app-langchain`
-
-<img width="275" height="134" alt="image" src="https://github.com/user-attachments/assets/ad6e478c-c8af-439f-b833-44c4a4a02228" />
-
-The ingestion pipeline applies hierarchical chunking tuned to the workbook's structure: tighter chunks for prose chapters (1,200 chars) and larger windows for tests, forms, and appendices (2,200 chars), preserving semantic coherence. Each chunk carries rich metadata — part scope, chapter, section type, and page range — enabling targeted retrieval and accurate citation generation.
-
-<br />
+#### END
 
 ## Chatbot UI
 
