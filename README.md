@@ -2,11 +2,24 @@
 
 ## Overview
 
-The DanceSport Wellbeing Coach is a single-source Retrieval-Augmented Generation (RAG) application that enables DanceSport athletes to ask natural-language questions about showcase and competition preparation.
+The DanceSport Wellbeing Coach is a single-source Retrieval-Augmented Generation (RAG) application that enables DanceSport athletes to access trusted guidance on training, performance, and wellbeing by asking natural-language questions related to showcase and competition preparation.
 
-Athletes can receive guidance on topics such as performance readiness, practice and preparation, musicality and timing, confidence and stage presence, expression and storytelling, and mindset and mental performance.
+The coach is designed to serve multiple roles, including a/an:
+- Evidence-based advisor that provides trusted guidance specially for showcase and competition success.
+- anceSport coach that helps athletes train effectively, perform with confidence, and compete at their highest potential.
+- Full Potential coach that empowers athletes to unlock their maximum potential both on and off the dance floor.
+- Wellbeing and performance companion that helps athletes strengthen the physical, mental, emotional, and performance dimensions.
+- Personalized companion that supports athletes in their pursuit of excellence, continuous improvement, and mastery.
 
-All responses are grounded exclusively in *Dance To Your Maximum* by Maximiliaan Winkelhuis and include inline citations to the relevant chapter and page, enabling athletes to verify the source material and explore the concepts in greater depth.
+Athletes can ask questions and receive guidance across six categories:
+1. Performance readiness
+2. Practice and preparation
+3. Musicality and timing
+4. Confidence and stage presence
+5. Expression and storytelling
+6. Mindset and mental performance
+
+All responses are grounded exclusively in Dance To Your Maximum by Maximiliaan Winkelhuis and include inline citations to the relevant chapter and page, enabling athletes to verify the source material and explore the concepts in greater depth.
 
 ## Problem Statement
 
