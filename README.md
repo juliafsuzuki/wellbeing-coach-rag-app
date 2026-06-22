@@ -48,12 +48,12 @@ wellbeing-coach-rag-app/
 └── .venv/                          # Python virtual environment
 ```
 
-## Documentation
+### Documentation
 
 - [Project Specification](docs/specification.md): Both functional & technical: user stories, UI categories, RAG graph, routing, metadata schema, evaluation, constraints.
 - [Project Design](docs/project_design.md): Architecture, chunking, retrieval, and evaluation decisions.
 
----
+<br />
 
 ## Technical Architecture
 
