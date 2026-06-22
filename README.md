@@ -331,42 +331,70 @@ Users can also type a free-text question in the persistent chat input at the bot
 
 ### Answer format:
 
-Every claim is tagged and cited:
+Every claim is tagged, confidence-rated, and cited.
 
-- **Epistemic tags:** `[KNOWN]`, `[INFERRED]`, `[COMPUTED]`, `[COMMON]`, `[FRAME]`, `[GUESS]`
-- **Confidence:** HIGH (≥80%) · MED (50–80%) · LOW (20–50%) · VERY LOW (<20%) · UNKNOWN
-- **Citation:** `[Dance To Your Maximum, Chapter X-Y, pp. Z–W]`
-- **Refusal:** When no relevant context is retrieved, the answer begins with `"I don't have that in my knowledge base."` — no fabrication.
+**Epistemic tags** — applied to every claim:
+
+| Tag | Meaning |
+|---|---|
+| `[KNOWN]` | Established training fact |
+| `[COMPUTED]` | Calculated value |
+| `[INFERRED]` | Logical deduction from context |
+| `[COMMON]` | Standard domain knowledge |
+| `[FRAME]` | Symbolic system — coherent within its frame, not a real-world claim |
+| `[GUESS]` | No supporting basis |
+
+**Confidence rating** — appended to each claim: `HIGH` (≥80%) · `MED` (50–80%) · `LOW` (20–50%) · `VERY LOW` (<20%) · `UNKNOWN`. `[FRAME]` and `[GUESS]` claims are capped at `LOW`.
+
+**Citation** — inline after every claim: `[Dance To Your Maximum, Chapter 1-2, pp. 21–24]`
+
+**Refusal** — if the retrieved context does not contain a sufficient answer, the response opens with `"I don't have that in my knowledge base."` No speculation, no fabrication.
+
+**Self-audit** — the model appends `[RULES I BROKE]: which, where, why` whenever it detects a rule violation in its own output.
 
 <br />
 
 ## Scope and Constraints
 
-- Single corpus (no multi-document upload): all knowledge is derived from an e-book, Dance To Your Maximum. 
-- No cross-session memory (chat history clears on reload)
-- No re-ranking, no streaming
-- Local `.env` for secrets; single-process Streamlit deployment
+- **Single corpus:** all knowledge is derived from one source — the e-book *Dance To Your Maximum*. No multi-document upload.
+- **No multi-turn retrieval awareness:** each question is processed independently. Chat history is displayed in the UI but is not passed into the retrieval or generation steps.
+- **No cross-session memory:** chat history clears on page reload.
+- **No re-ranking or streaming:** retrieval returns top-k results by cosine similarity; responses are returned in full once generation completes.
+- **Secrets via `.env`:** API keys are never hard-coded; the app runs as a single-process Streamlit deployment.
 
 ## Key capabilities
 
-- Conversational Q&A via a Streamlit web interface, accessible to non-technical users
-- Intelligent query routing (powered by LangGraph) that directs questions to the most relevant section of the knowledge base — competition day, season, or career
-- Structured retrieval from Pinecone vector store using semantic search and metadata filters (by part, chapter, and content type)
-- Questions outside the scope of the book trigger a graceful refusal rather than a speculative answer. This design choice prioritises reliability over breadth.
-- LangSmith traces every call at the chain level.
-- Inline citations in every response, formatted as [Dance To Your Maximum, Chapter X-X, pp. XX–XX], enabling athletes and coaches to verify and deepen their reading
-- Faithfulness evaluation pipeline using an LLM-as-judge approach, targeting ≥90% faithfulness against a 15-question benchmark test set
+- **Conversational Q&A** via a Streamlit web interface, accessible to non-technical users
+- **Intelligent query routing** (LangGraph) classifies each question on two dimensions — part scope (`competition_day`, `season`, `career`) and content type (`prose`, `test`, `form`, `appendix`) — and applies matching metadata filters before retrieval
+- **Semantic retrieval** from Pinecone vector store with metadata filtering; falls back to unfiltered search when a filtered query returns no results
+- **Image-based PDF support:** the source e-book is fully scanned (no text layer); PyMuPDF + Tesseract OCR pipeline extracts text with results cached to disk after the first run
+- **Epistemic tagging:** every claim is labelled `[KNOWN]`, `[COMPUTED]`, `[INFERRED]`, `[COMMON]`, `[FRAME]`, or `[GUESS]`, with a confidence rating — making the reasoning transparent and auditable
+- **Inline citations** in every response — `[Dance To Your Maximum, Chapter X-Y, pp. Z–W]` — drawn from chunk metadata, never fabricated
+- **Graceful refusal:** questions outside the scope of the retrieved context produce `"I don't have that in my knowledge base."` rather than a speculative answer
+- **Faithfulness evaluation pipeline** using an LLM-as-judge (`gpt-4.1-mini`, temp=0) over a fixed 15-question benchmark, targeting ≥90% faithfulness
+- **LangSmith observability** integrated for full chain tracing; currently disabled — activate by setting `LANGCHAIN_TRACING_V2=true` and supplying a `LANGCHAIN_API_KEY`
 
 ## Value Proposition
 
-- Trustworthy outputs: every claim links back to a specific page range in the source text, eliminating hallucination risk on in-scope questions
-- Domain-aware retrieval: routing and metadata filtering ensure the model draws from the right section of the knowledge base, not just the nearest vector
-- Measurable quality: the built-in evaluation pipeline gives objective faithfulness metrics before any deployment or knowledge-base update
-- Low barrier to use: Streamlit UI requires no technical knowledge from end users
+- **Trustworthy outputs:** every claim links back to a specific page range in the source text, minimising hallucination risk on in-scope questions. Out-of-scope questions are refused rather than answered speculatively.
+- **Domain-aware retrieval:** two-dimensional routing (part scope + content type) and metadata filtering ensure the model draws from the right section of the knowledge base, not just the nearest vector.
+- **Transparent reasoning:** epistemic tags and confidence ratings surface the basis for every claim, letting users judge answers rather than accept them at face value.
+- **Measurable quality:** the built-in evaluation pipeline (Section 11) produces objective faithfulness metrics before any deployment or knowledge-base update.
+- **Low barrier to use:** the Streamlit UI requires no technical knowledge; pre-built question categories make it immediately useful without any prior familiarity with the source material.
 
 ## Evaluation
 
-15-question fixed test set with an LLM judge (`gpt-4.1-mini`, temp=0) plus manual spot-check. Target: ≥90% faithfulness (claims fully supported by retrieved context). PASS/FAIL is printed in-notebook.
+**Method:** automated LLM-as-judge (`gpt-4.1-mini`, temp=0) run inside the notebook (Section 11).
+
+**Faithfulness** measures whether every factual claim in the generated answer is directly supported by the retrieved passages — it is not a measure of real-world accuracy. A faithful answer can only assert what the retrieved context contains.
+
+| Setting | Value |
+|---|---|
+| Test set | 15 fixed questions, one per major topic area |
+| Primary metric | Faithfulness — % of answers whose claims are fully supported by context |
+| Target | ≥ 90% faithful answers |
+| Secondary check | Manual spot-check on a representative subset |
+| Output | Per-question PASS / FAIL with verdict printed in-notebook |
 
 
 
