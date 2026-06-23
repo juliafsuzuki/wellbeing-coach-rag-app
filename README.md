@@ -315,7 +315,7 @@ Metadata filters used at query time: `part_scope` and/or `section_type`.
 
 ---
 
-### 4. Query Routing (LangGraph)
+### 4. Query Routing — LangGraph
 
 A 3-node stateful graph (`route → retrieve → generate`) processes every query.
 
